@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AusCar - Australia's Premier Car Auction Platform</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #008751; /* Australian green */
+      --primary-hover: #006d41;
+      --accent-color: #ffc40c; /* Australian gold */
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: rgba(0, 0, 0, 0.96);
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    .bg-grid {
+      background-size: 30px 30px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+    
+    /* Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .animate-pulse {
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .animate-spin-slow {
+      animation: spin-slow 15s linear infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .animate-bounce-slow {
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .fade-in-left {
+      animation: fadeInLeft 0.5s ease forwards;
+    }
+    
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .fade-in-right {
+      animation: fadeInRight 0.5s ease forwards;
+    }
+    
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .zoom-in {
+      animation: zoomIn 0.5s ease forwards;
+    }
+    
+    @keyframes headlightFlash {
+      0%, 100% { opacity: 0.3; box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
+      50% { opacity: 1; box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6); }
+    }
+    
+    .headlight {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: white;
+      border-radius: 50%;
+      animation: headlightFlash 2s ease-in-out infinite;
+    }
+    
+    .headlight-left {
+      top: 50%;
+      left: 10%;
+    }
+    
+    .headlight-right {
+      top: 50%;
+      right: 10%;
+    }
+    
+    @keyframes wheelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .wheel {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #333;
+      border: 2px solid #666;
+      border-radius: 50%;
+      animation: wheelSpin 1s linear infinite;
+    }
+    
+    .wheel-front-left {
+      bottom: 10%;
+      left: 15%;
+    }
+    
+    .wheel-front-right {
+      bottom: 10%;
+      right: 15%;
+    }
+    
+    .wheel-back-left {
+      bottom: 10%;
+      left: 75%;
+    }
+    
+    .wheel-back-right {
+      bottom: 10%;
+      right: 75%;
+    }
+    
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+    .delay-600 { animation-delay: 0.6s; }
+    .delay-700 { animation-delay: 0.7s; }
+    .delay-800 { animation-delay: 0.8s; }
+    
+    .car-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .car-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 10px 25px -5px rgba(0, 135, 81, 0.2);
+    }
+    
+    .car-card:hover .car-overlay {
+      opacity: 1;
+    }
+    
+    .car-card:hover .car-image {
+      transform: scale(1.1);
+    }
+    
+    .car-image {
+      transition: transform 0.5s ease;
+    }
+    
+    .car-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+    
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    /* Canvas styles */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    
+    /* Floating cars */
+    .floating-car {
+      position: absolute;
+      width: 64px;
+      height: 80px;
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(4px);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    
+    .floating-car:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 0 20px rgba(0, 135, 81, 0.3);
+      z-index: 10;
+    }
+    
+    .floating-car:hover .headlight {
+      animation: headlightFlash 0.5s ease-in-out infinite;
+    }
+    
+    .floating-car:hover .wheel {
+      animation: wheelSpin 0.5s linear infinite;
+    }
+    
+    /* Button styles */
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 135, 81, 0.3);
+    }
+    
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .btn-primary:hover::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline:hover {
+      background-color: rgba(0, 135, 81, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 135, 81, 0.2);
+    }
+    
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: #000;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-accent:hover {
+      background-color: #e6b00b;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 196, 12, 0.3);
+    }
+    
+    /* Badge */
+    .badge {
+      background-color: var(--accent-color);
+      color: #000;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .badge:hover {
+      transform: scale(1.1);
+    }
+    
+    .badge-premium {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* Australia map shape for logo */
+    .aus-shape {
+      clip-path: polygon(
+        30% 10%, 40% 5%, 50% 0%, 60% 5%, 70% 10%, 80% 15%, 
+        90% 25%, 95% 35%, 100% 45%, 95% 55%, 90% 65%, 
+        80% 75%, 70% 85%, 60% 90%, 50% 95%, 40% 90%, 
+        30% 85%, 20% 75%, 10% 65%, 5% 55%, 0% 45%, 
+        5% 35%, 10% 25%, 20% 15%
+      );
+      transition: all 0.3s ease;
+    }
+    
+    .aus-shape:hover {
+      filter: brightness(1.2);
+      transform: scale(1.1);
+    }
+    
+    /* Scroll animations */
+    .reveal {
+      position: relative;
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+    
+    .reveal.active {
+      opacity: 1;
+    }
+    
+    .reveal-left {
+      transform: translateX(-50px);
+    }
+    
+    .reveal-right {
+      transform: translateX(50px);
+    }
+    
+    .reveal-up {
+      transform: translateY(50px);
+    }
+    
+    .reveal-down {
+      transform: translateY(-50px);
+    }
+    
+    .reveal.active {
+      transform: translateX(0) translateY(0);
+    }
+    
+    /* Animated counter */
+    .counter-value {
+      transition: all 0.5s ease;
+    }
+    
+    /* Animated progress bar */
+    .progress-bar {
+      height: 4px;
+      width: 0;
+      background-color: var(--primary-color);
+      transition: width 1s ease;
+    }
+    
+    /* Rotating gears animation */
+    @keyframes rotateGear {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .gear-animation {
+      animation: rotateGear 10s linear infinite;
+    }
+    
+    .gear-animation-reverse {
+      animation: rotateGear 10s linear infinite reverse;
+    }
+  </style>
+</head>
+<body class="bg-grid">
+  <!-- Particles Canvas -->
+  <canvas id="particles-canvas"></canvas>
+  
+  <!-- Progress bar -->
+  <div class="fixed top-0 left-0 w-full h-1 z-50">
+    <div id="scroll-progress" class="progress-bar"></div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="relative z-10">
+    <!-- Navbar -->
+    <nav class="flex items-center justify-between px-6 py-4 backdrop-blur-sm border-b border-white/10 fade-in-up" style="animation-duration: 0.5s;">
+      <a href="/" class="flex items-center space-x-2 group">
+        <div class="w-10 h-10 bg-gradient-to-br from-green-600 to-yellow-400 rounded-md flex items-center justify-center aus-shape group-hover:animate-pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.3 1 12.1 1 13v3c0 .6.4 1 1 1h2"></path>
+            <circle cx="7" cy="17" r="2"></circle>
+            <path d="M9 17h6"></path>
+            <circle cx="17" cy="17" r="2"></circle>
+          </svg>
+        </div>
+        <span class="text-white font-medium text-xl group-hover:text-green-400 transition-colors">AusCar</span>
+      </a>
+
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#auctions" class="text-gray-300 hover:text-white transition-colors nav-link">Live Auctions</a>
+        <a href="#sell" class="text-gray-300 hover:text-white transition-colors nav-link">Sell Your Car</a>
+        <a href="#how-it-works" class="text-gray-300 hover:text-white transition-colors nav-link">How It Works</a>
+        <a href="#locations" class="text-gray-300 hover:text-white transition-colors nav-link">Locations</a>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-4">
+        <button class="text-white hover:text-green-400 bg-transparent px-4 py-2 rounded-md transition-colors">Login</button>
+        <button class="btn-primary">Register</button>
+      </div>
+
+      <button class="md:hidden text-white bg-transparent">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" x2="20" y1="12" y2="12"></line>
+          <line x1="4" x2="20" y1="6" y2="6"></line>
+          <line x1="4" x2="20" y1="18" y2="18"></line>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative min-h-[calc(100vh-76px)] flex items-center">
+      <!-- Floating cars container -->
+      <div id="floating-cars-container" class="absolute inset-0 overflow-hidden"></div>
+      
+      <!-- Animated background elements -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-green-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-1/3 right-1/4 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-2/3 left-1/2 w-24 h-24 bg-green-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+      </div>
+
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 fade-in-up">
+            Australia's Premier
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-yellow-400 animate-pulse" style="animation-duration: 3s;"> Car Auctions</span>
+          </h1>
+
+          <p class="text-gray-400 text-xl mb-8 max-w-2xl mx-auto fade-in-up delay-200">
+            Find the perfect vehicle at unbeatable prices. From Sydney to Perth, we bring Australia's best car deals to your fingertips.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in-up delay-300">
+            <button class="btn-primary flex items-center group">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 group-hover:animate-spin-slow">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              Browse Auctions
+            </button>
+            <button class="btn-outline flex items-center group">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 group-hover:animate-bounce-slow">
+                <path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"></path>
+                <path d="M17.64 15 22 10.64"></path>
+                <path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"></path>
+              </svg>
+              Sell Your Car
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auction Countdown -->
+      <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 fade-in-up delay-400">
+        <div class="bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4 text-center hover:border-green-500/50 transition-colors">
+          <div class="flex items-center justify-center gap-2 mb-2 text-green-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin-slow">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="font-medium">Sydney Live Auction</span>
+          </div>
+          <div class="flex gap-4" id="countdown">
+            <div class="flex flex-col items-center">
+              <div class="text-2xl font-bold text-white" id="hours">23</div>
+              <div class="text-xs text-gray-400">HOURS</div>
+            </div>
+            <div class="text-white text-2xl font-bold">:</div>
+            <div class="flex flex-col items-center">
+              <div class="text-2xl font-bold text-white" id="minutes">59</div>
+              <div class="text-xs text-gray-400">MINUTES</div>
+            </div>
+            <div class="text-white text-2xl font-bold">:</div>
+            <div class="flex flex-col items-center">
+              <div class="text-2xl font-bold text-white" id="seconds">59</div>
+              <div class="text-xs text-gray-400">SECONDS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Animated scroll indicator -->
+      <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 fade-in-up delay-600">
+        <div class="animate-bounce flex flex-col items-center">
+          <span class="text-gray-400 text-sm mb-1">Scroll Down</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <section class="py-10 px-6 bg-black/30 backdrop-blur-sm">
+      <div class="container mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div class="reveal reveal-up">
+            <div class="text-3xl font-bold text-green-500 counter-value" data-target="15000">0</div>
+            <div class="text-gray-400">Cars Sold</div>
+          </div>
+          <div class="reveal reveal-up" style="transition-delay: 0.2s;">
+            <div class="text-3xl font-bold text-green-500 counter-value" data-target="98">0</div>
+            <div class="text-gray-400">Satisfaction Rate %</div>
+          </div>
+          <div class="reveal reveal-up" style="transition-delay: 0.4s;">
+            <div class="text-3xl font-bold text-green-500 counter-value" data-target="7">0</div>
+            <div class="text-gray-400">Locations Nationwide</div>
+          </div>
+          <div class="reveal reveal-up" style="transition-delay: 0.6s;">
+            <div class="text-3xl font-bold text-green-500 counter-value" data-target="25000">0</div>
+            <div class="text-gray-400">Happy Customers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Cars Section -->
+    <section class="py-20 px-6" id="auctions">
+      <div class="container mx-auto">
+        <div class="text-center mb-12 reveal reveal-up">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Featured Auctions</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            Discover our handpicked selection of quality vehicles from across Australia
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="featured-cars">
+          <!-- Car cards will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="text-center mt-10 reveal reveal-up">
+          <button class="btn-outline hover:animate-pulse">View All Auctions</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Locations Section -->
+    <section class="py-20 px-6 bg-gradient-to-b from-transparent to-black/40" id="locations">
+      <div class="container mx-auto">
+        <div class="text-center mb-16 reveal reveal-up">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Auction Locations</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            We host regular car auctions across major Australian cities
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="locations-container">
+          <!-- Locations will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 px-6 bg-gradient-to-b from-transparent to-black/40" id="how-it-works">
+      <div class="container mx-auto">
+        <div class="text-center mb-16 reveal reveal-up">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">How AusCar Works</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            Our auction process is simple, transparent, and designed to help you find your perfect car
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="steps-container">
+          <!-- Steps will be inserted here by JavaScript -->
+        </div>
+
+        <div class="mt-16 text-center reveal reveal-up">
+          <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-6 max-w-3xl mx-auto hover:bg-green-500/20 transition-colors">
+            <h3 class="text-white text-xl font-semibold mb-2">Ready to Start Bidding?</h3>
+            <p class="text-gray-400 mb-4">
+              Join thousands of Australians who have found their dream cars through AusCar auctions.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <button class="btn-primary">Register Now</button>
+              <button class="btn-outline">Learn More</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 px-6 bg-black/30" id="testimonials">
+      <div class="container mx-auto">
+        <div class="text-center mb-16 reveal reveal-up">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">What Our Customers Say</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            Hear from Australians who have found their perfect vehicles through AusCar
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="testimonials-container">
+          <!-- Testimonials will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 px-6 border-t border-white/10">
+      <div class="container mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="w-8 h-8 bg-gradient-to-br from-green-600 to-yellow-400 rounded-md flex items-center justify-center aus-shape animate-pulse" style="animation-duration: 3s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.3 1 12.1 1 13v3c0 .6.4 1 1 1h2"></path>
+                  <circle cx="7" cy="17" r="2"></circle>
+                  <path d="M9 17h6"></path>
+                  <circle cx="17" cy="17" r="2"></circle>
+                </svg>
+              </div>
+              <span class="text-white font-medium text-xl">AusCar</span>
+            </div>
+            <p class="text-gray-400">Australia's premier car auction platform, connecting buyers and sellers nationwide.</p>
+          </div>
+          
+          <div>
+            <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+              <li><a href="#auctions" class="text-gray-400 hover:text-white transition-colors">Live Auctions</a></li>
+              <li><a href="#sell" class="text-gray-400 hover:text-white transition-colors">Sell Your Car</a></li>
+              <li><a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="text-white font-semibold mb-4">Locations</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Sydney</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Melbourne</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Brisbane</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Perth</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Adelaide</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="text-white font-semibold mb-4">Newsletter</h4>
+            <p class="text-gray-400 mb-4">Subscribe to get updates on new auctions and exclusive offers.</p>
+            <div class="flex">
+              <input type="email" placeholder="Your email" class="bg-white/10 border border-white/20 rounded-l-md px-4 py-2 w-full focus:outline-none focus:border-green-500 transition-colors">
+              <button class="bg-green-500 hover:bg-green-600 text-white px-4 rounded-r-md transition-colors hover:animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m22 2-7 20-4-9-9-4Z"></path>
+                  <path d="M22 2 11 13"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="border-t border-white/10 mt-10 pt-6 text-center text-gray-400">
+          <p>&copy; 2025 AusCar. All rights reserved. ABN: 12 345 678 901</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Particles animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let animationFrameId;
+      let mousePosition = { x: 0, y: 0 };
+
+      // Set canvas dimensions
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // Particle class
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * (1.4 - 0.6) + 0.6;
+          this.speedX = Math.random() * 0.5 - 0.25;
+          this.speedY = Math.random() * 0.5 - 0.25;
+          // Australian colors
+          this.color = Math.random() > 0.5 ? 'rgba(0, 135, 81, 0.7)' : 'rgba(255, 196, 12, 0.7)';
+        }
+
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+
+          if (this.x > canvas.width) this.x = 0;
+          if (this.x < 0) this.x = canvas.width;
+          if (this.y > canvas.height) this.y = 0;
+          if (this.y < 0) this.y = canvas.height;
+
+          // Mouse interaction
+          const dx = mousePosition.x - this.x;
+          const dy = mousePosition.y - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 100) {
+            const angle = Math.atan2(dy, dx);
+            this.x -= Math.cos(angle) * 1;
+            this.y -= Math.sin(angle) * 1;
+          }
+        }
+
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Initialize particles
+      function init() {
+        particles = [];
+        for (let i = 0; i < 100; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      // Animation loop
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(particle => {
+          particle.update();
+          particle.draw();
+        });
+
+        animationFrameId = requestAnimationFrame(animate);
+      }
+
+      // Track mouse position
+      document.addEventListener('mousemove', function(e) {
+        mousePosition.x = e.clientX;
+        mousePosition.y = e.clientY;
+      });
+
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
+      });
+
+      // Start animation
+      init();
+      animate();
+    });
+
+    // Floating cars
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('floating-cars-container');
+      const carTypes = [
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400/50"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.3 1 12.1 1 13v3c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg>`,
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400/50"><path d="M5,11L6.5,6.5H17.5L19,11M17.5,16A1.5,1.5 0 0,1 16,14.5A1.5,1.5 0 0,1 17.5,13A1.5,1.5 0 0,1 19,14.5A1.5,1.5 0 0,1 17.5,16M6.5,16A1.5,1.5 0 0,1 5,14.5A1.5,1.5 0 0,1 6.5,13A1.5,1.5 0 0,1 8,14.5A1.5,1.5 0 0,1 6.5,16M18.92,6C18.72,5.42 18.16,5 17.5,5H6.5C5.84,5 5.28,5.42 5.08,6L3,12V20A1,1 0 0,0 4,21H5A1,1 0 0,0 6,20V19H18V20A1,1 0 0,0 19,21H20A1,1 0 0,0 21,20V12L18.92,6Z" /></svg>`,
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-green-400/50"><path d="M23,10V12H21V10H23M21,14V16H19V14H21M19,18V20H17V18H19M17,20V22H15V20H17M15,22V24H13V22H15M13,24V26H11V24H13M11,26V28H9V26H11M9,28V30H7V28H9M7,30V32H5V30H7M5,32V34H3V32H5M3,34V36H1V34H3M1,36V38H-1V36H1M-1,38V40H-3V38H-1M12,10C12,10 11,9.97 10,10.92C9.4,11.59 9,12.27 9,13C9,13.73 9.4,14.41 10,15.08C11,16.03 12,16 12,16C12,16 13,16.03 14,15.08C14.6,14.41 15,13.73 15,13C15,12.27 14.6,11.59 14,10.92C13,9.97 12,10 12,10M7,13C7,14.5 7.83,15.94 9,17C10.17,18.06 12,18 12,18C12,18 13.83,18.06 15,17C16.17,15.94 17,14.5 17,13C17,11.5 16.17,10.06 15,9C13.83,7.94 12,8 12,8C12,8 10.17,7.94 9,9C7.83,10.06 7,11.5 7,13M5,16.5C5,16.5 6.17,15.17 7.67,14.5C7.23,14.05 6.92,13.5 6.92,13C6.92,12.5 7.23,11.95 7.67,11.5C6.17,10.83 5,9.5 5,9.5C5,9.5 3.83,10.83 2.33,11.5C2.77,11.95 3.08,12.5 3.08,13C3.08,13.5 2.77,14.05 2.33,14.5C3.83,15.17 5,16.5 5,16.5M19,16.5C19,16.5 17.83,15.17 16.33,14.5C16.77,14.05 17.08,13.5 17.08,13C17.08,12.5 16.77,11.95 16.33,11.5C17.83,10.83 19,9.5 19,9.5C19,9.5 20.17,10.83 21.67,11.5C21.23,11.95 20.92,12.5 20.92,13C20.92,13.5 21.23,14.05 21.67,14.5C20.17,15.17 19,16.5 19,16.5Z" /></svg>`,
+        `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400/50"><path d="M18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5M19.5,9.5L21.46,12H17V9.5M6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5M20,8H17V4H3C1.89,4 1,4.89 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8Z" /></svg>`
+      ];
+
+      // Create floating cars
+      for (let i = 0; i < 6; i++) {
+        const car = document.createElement('div');
+        car.className = 'floating-car';
+        car.innerHTML = carTypes[Math.floor(Math.random() * carTypes.length)];
+        
+        // Add headlights and wheels
+        const headlightLeft = document.createElement('div');
+        headlightLeft.className = 'headlight headlight-left';
+        car.appendChild(headlightLeft);
+        
+        const headlightRight = document.createElement('div');
+        headlightRight.className = 'headlight headlight-right';
+        car.appendChild(headlightRight);
+        
+        const wheelFrontLeft = document.createElement('div');
+        wheelFrontLeft.className = 'wheel wheel-front-left';
+        car.appendChild(wheelFrontLeft);
+        
+        const wheelFrontRight = document.createElement('div');
+        wheelFrontRight.className = 'wheel wheel-front-right';
+        car.appendChild(wheelFrontRight);
+        
+        // Random initial position
+        car.style.left = `${Math.random() * window.innerWidth}px`;
+        car.style.top = `${Math.random() * window.innerHeight}px`;
+        
+        container.appendChild(car);
+        
+        // Animate each car
+        animateCar(car);
+      }
+
+      function animateCar(car) {
+        const duration = 20000 + Math.random() * 10000;
+        const targetX = Math.random() * window.innerWidth;
+        const targetY = Math.random() * window.innerHeight;
+        const rotation = Math.random() * 360;
+        
+        car.animate([
+          { transform: `translate(${car.style.left}, ${car.style.top}) rotate(0deg)` },
+          { transform: `translate(${targetX}px, ${targetY}px) rotate(${rotation}deg)` }
+        ], {
+          duration: duration,
+          easing: 'linear',
+          fill: 'forwards'
+        }).onfinish = function() {
+          car.style.left = `${targetX}px`;
+          car.style.top = `${targetY}px`;
+          animateCar(car);
+        };
+      }
+    });
+
+    // Countdown timer
+    document.addEventListener('DOMContentLoaded', function() {
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      const secondsEl = document.getElementById('seconds');
+      
+      let hours = 23;
+      let minutes = 59;
+      let seconds = 59;
+      
+      function updateCountdown() {
+        if (seconds > 0) {
+          seconds--;
+        } else if (minutes > 0) {
+          minutes--;
+          seconds = 59;
+        } else if (hours > 0) {
+          hours--;
+          minutes = 59;
+          seconds = 59;
+        } else {
+          // Reset to 24 hours when countdown reaches zero
+          hours = 23;
+          minutes = 59;
+          seconds = 59;
+        }
+        
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+      }
+      
+      // Update countdown every second
+      setInterval(updateCountdown, 1000);
+    });
+
+    // Featured cars
+    document.addEventListener('DOMContentLoaded', function() {
+      const featuredCarsContainer = document.getElementById('featured-cars');
+      
+      const featuredCars = [
+        {
+          id: 1,
+          name: "2023 Toyota LandCruiser 300",
+          image: "https://placehold.co/300x200",
+          currentBid: 125000,
+          bids: 24,
+          timeLeft: "2 days",
+          premium: true,
+        },
+        {
+          id: 2,
+          name: "2022 Ford Ranger Raptor",
+          image: "https://placehold.co/300x200",
+          currentBid: 82500,
+          bids: 18,
+          timeLeft: "1 day",
+          premium: false,
+        },
+        {
+          id: 3,
+          name: "2021 Holden Commodore SS",
+          image: "https://placehold.co/300x200",
+          currentBid: 65000,
+          bids: 21,
+          timeLeft: "3 days",
+          premium: true,
+        },
+        {
+          id: 4,
+          name: "2023 Hyundai Ioniq 5",
+          image: "https://placehold.co/300x200",
+          currentBid: 78000,
+          bids: 15,
+          timeLeft: "4 days",
+          premium: false,
+        },
+      ];
+      
+      // Render featured cars
+      featuredCars.forEach((car, index) => {
+        const carCard = document.createElement('div');
+        carCard.className = 'car-card bg-black/40 border border-white/10 rounded-lg overflow-hidden h-full reveal reveal-up';
+        carCard.style.transitionDelay = `${index * 0.1}s`;
+        
+        let premiumBadge = '';
+        if (car.premium) {
+          premiumBadge = `<span class="badge badge-premium absolute top-2 right-2">Premium</span>`;
+        }
+        
+        carCard.innerHTML = `
+          <div class="relative">
+            <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-cover car-image">
+            <div class="car-overlay"></div>
+            ${premiumBadge}
+            <div class="headlight headlight-left"></div>
+            <div class="headlight headlight-right"></div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-white font-semibold text-lg mb-2">${car.name}</h3>
+            
+            <div class="flex justify-between items-center mb-4">
+              <div class="text-gray-400 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>${car.bids} bids</span>
+              </div>
+              <div class="text-gray-400 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin-slow">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>${car.timeLeft}</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex flex-col">
+                <span class="text-gray-400 text-sm">Current Bid</span>
+                <span class="text-white font-bold">$${car.currentBid.toLocaleString()}</span>
+              </div>
+              <div class="flex items-center text-green-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-bounce-slow">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <span class="text-sm">Active</span>
+              </div>
+            </div>
+            
+            <button class="btn-primary w-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                <path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"></path>
+                <path d="M17.64 15 22 10.64"></path>
+                <path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"></path>
+              </svg>
+              Place Bid
+            </button>
+          </div>
+        `;
+        
+        featuredCarsContainer.appendChild(carCard);
+      });
+    });
+
+    // Locations
+    document.addEventListener('DOMContentLoaded', function() {
+      const locationsContainer = document.getElementById('locations-container');
+      
+      const locations = [
+        {
+          city: "Sydney",
+          address: "123 Parramatta Road, Sydney NSW 2000",
+          nextAuction: "Every Tuesday, 10:00 AM",
+          icon: "🏙️"
+        },
+        {
+          city: "Melbourne",
+          address: "456 Elizabeth Street, Melbourne VIC 3000",
+          nextAuction: "Every Wednesday, 10:00 AM",
+          icon: "🏛️"
+        },
+        {
+          city: "Brisbane",
+          address: "789 Ann Street, Brisbane QLD 4000",
+          nextAuction: "Every Thursday, 10:00 AM",
+          icon: "🌉"
+        },
+        {
+          city: "Perth",
+          address: "101 Great Eastern Highway, Perth WA 6000",
+          nextAuction: "Every Friday, 10:00 AM",
+          icon: "🏝️"
+        }
+      ];
+      
+      // Render locations
+      locations.forEach((location, index) => {
+        const locationElement = document.createElement('div');
+        locationElement.className = 'bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-center reveal reveal-up hover:border-green-500/30 transition-colors';
+        locationElement.style.transitionDelay = `${index * 0.1}s`;
+        
+        locationElement.innerHTML = `
+          <div class="text-4xl mb-4 animate-bounce-slow">${location.icon}</div>
+          <h3 class="text-white text-xl font-semibold mb-2">${location.city}</h3>
+          <p class="text-gray-400 mb-3">${location.address}</p>
+          <div class="bg-green-500/10 rounded-lg p-2 mt-4">
+            <span class="text-green-400 font-medium">${location.nextAuction}</span>
+          </div>
+        `;
+        
+        locationsContainer.appendChild(locationElement);
+      });
+    });
+
+    // How it works steps
+    document.addEventListener('DOMContentLoaded', function() {
+      const stepsContainer = document.getElementById('steps-container');
+      
+      const steps = [
+        {
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </svg>`,
+          title: "Find Your Car",
+          description: "Browse our extensive collection of premium vehicles up for auction.",
+        },
+        {
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
+                  <path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"></path>
+                  <path d="M17.64 15 22 10.64"></path>
+                  <path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91"></path>
+                </svg>`,
+          title: "Place Your Bid",
+          description: "Set your maximum bid and let our system automatically bid for you.",
+        },
+        {
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
+                  <circle cx="12" cy="8" r="6"></circle>
+                  <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+                </svg>`,
+          title: "Win the Auction",
+          description: "If you're the highest bidder when the timer ends, the car is yours!",
+        },
+        {
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.3 1 12.1 1 13v3c0 .6.4 1 1 1h2"></path>
+                  <circle cx="7" cy="17" r="2"></circle>
+                  <path d="M9 17h6"></path>
+                  <circle cx="17" cy="17" r="2"></circle>
+                </svg>`,
+          title: "Drive Away",
+          description: "Complete the payment and documentation to take ownership of your new car.",
+        },
+      ];
+      
+      // Render steps
+      steps.forEach((step, index) => {
+        const stepElement = document.createElement('div');
+        stepElement.className = 'bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-center reveal reveal-up hover:border-green-500/30 transition-colors';
+        stepElement.style.transitionDelay = `${index * 0.1}s`;
+        
+        stepElement.innerHTML = `
+          <div class="relative">
+            <div class="bg-white/5 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-white/10 transition-colors">
+              ${step.icon}
+            </div>
+            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
+              ${index + 1}
+            </div>
+          </div>
+          <h3 class="text-white text-xl font-semibold mb-2">${step.title}</h3>
+          <p class="text-gray-400">${step.description}</p>
+        `;
+        
+        stepsContainer.appendChild(stepElement);
+      });
+    });
+
+    // Testimonials
+    document.addEventListener('DOMContentLoaded', function() {
+      const testimonialsContainer = document.getElementById('testimonials-container');
+      
+      const testimonials = [
+        {
+          name: "Michael Thompson",
+          location: "Sydney, NSW",
+          image: "https://placehold.co/100",
+          text: "I was skeptical about buying a car at auction, but AusCar made the process incredibly easy. Their platform is user-friendly and the car I purchased was exactly as described. Couldn't be happier!",
+          rating: 5
+        },
+        {
+          name: "Sarah Johnson",
+          location: "Melbourne, VIC",
+          image: "https://placehold.co/100",
+          text: "Found my dream Holden Commodore at a price I couldn't believe. The bidding process was exciting and the AusCar team helped me every step of the way. Will definitely use again!",
+          rating: 5
+        },
+        {
+          name: "David Wilson",
+          location: "Brisbane, QLD",
+          image: "https://placehold.co/100",
+          text: "As a first-time car buyer, I was nervous about auctions. AusCar's staff were patient and helpful, explaining everything clearly. The Toyota I won was in fantastic condition and well below market value.",
+          rating: 4
+        }
+      ];
+      
+      // Render testimonials
+      testimonials.forEach((testimonial, index) => {
+        const testimonialElement = document.createElement('div');
+        testimonialElement.className = 'bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-6 reveal reveal-up hover:border-green-500/30 transition-colors';
+        testimonialElement.style.transitionDelay = `${index * 0.1}s`;
+        
+        // Create star rating
+        let stars = '';
+        for (let i = 0; i < 5; i++) {
+          if (i < testimonial.rating) {
+            stars += `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>`;
+          } else {
+            stars += `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>`;
+          }
+        }
+        
+        testimonialElement.innerHTML = `
+          <div class="flex items-center mb-4">
+            <img src="${testimonial.image}" alt="${testimonial.name}" class="w-12 h-12 rounded-full mr-4">
+            <div>
+              <h4 class="text-white font-semibold">${testimonial.name}</h4>
+              <p class="text-gray-400 text-sm">${testimonial.location}</p>
+            </div>
+          </div>
+          <p class="text-gray-300 mb-4">"${testimonial.text}"</p>
+          <div class="flex items-center">
+            ${stars}
+          </div>
+        `;
+        
+        testimonialsContainer.appendChild(testimonialElement);
+      });
+    });
+
+    // Scroll animations
+    document.addEventListener('DOMContentLoaded', function() {
+      const revealElements = document.querySelectorAll('.reveal');
+      
+      function checkReveal() {
+        const windowHeight = window.innerHeight;
+        const revealPoint = 150;
+        
+        revealElements.forEach(element => {
+          const revealTop = element.getBoundingClientRect().top;
+          
+          if (revealTop < windowHeight - revealPoint) {
+            element.classList.add('active');
+          }
+        });
+      }
+      
+      window.addEventListener('scroll', checkReveal);
+      // Initial check
+      checkReveal();
+      
+      // Scroll progress bar
+      const scrollProgress = document.getElementById('scroll-progress');
+      
+      function updateScrollProgress() {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollPercentage = (scrollTop / scrollHeight) * 100;
+        
+        scrollProgress.style.width = scrollPercentage + '%';
+      }
+      
+      window.addEventListener('scroll', updateScrollProgress);
+      // Initial update
+      updateScrollProgress();
+    });
+
+    // Animated counters
+    document.addEventListener('DOMContentLoaded', function() {
+      const counterElements = document.querySelectorAll('.counter-value');
+      
+      function animateCounter(element) {
+        const target = parseInt(element.getAttribute('data-target'));
+        const duration = 2000; // 2 seconds
+        const step = target / (duration / 16); // 60fps
+        let current = 0;
+        
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) {
+            element.textContent = target.toLocaleString();
+            clearInterval(timer);
+          } else {
+            element.textContent = Math.floor(current).toLocaleString();
+          }
+        }, 16);
+      }
+      
+      function checkCounters() {
+        counterElements.forEach(counter => {
+          const position = counter.getBoundingClientRect();
+          
+          if (position.top < window.innerHeight && position.bottom > 0) {
+            if (!counter.classList.contains('animated')) {
+              counter.classList.add('animated');
+              animateCounter(counter);
+            }
+          }
+        });
+      }
+      
+      window.addEventListener('scroll', checkCounters);
+      // Initial check
+      checkCounters();
+    });
+  </script>
+</body>
+</html>
